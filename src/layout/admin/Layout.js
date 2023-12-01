@@ -31,7 +31,7 @@ function header({ children }){
                                     <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Giảng viên
                                 </a>
-                                <a class="nav-link" href="user">
+                                <a class="nav-link" href="class">
                                     <div class="sb-nav-link-icon"><i class="fa fa-list iconmenu"></i></div>
                                     Lớp học
                                 </a>
