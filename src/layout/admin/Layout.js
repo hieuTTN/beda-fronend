@@ -23,7 +23,7 @@ function header({ children }){
                                     <div class="sb-nav-link-icon"><i class="fa fa-user iconmenu"></i></div>
                                     Tài khoản
                                 </a>
-                                <a class="nav-link" href="user">
+                                <a class="nav-link" href="student">
                                     <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Sinh viên
                                 </a>
