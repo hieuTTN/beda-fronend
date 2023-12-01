@@ -24,12 +24,24 @@ function header({ children }){
                                     Tài khoản
                                 </a>
                                 <a class="nav-link" href="user">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-user iconmenu"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Sinh viên
                                 </a>
                                 <a class="nav-link" href="user">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-user iconmenu"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Giảng viên
+                                </a>
+                                <a class="nav-link" href="user">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-list iconmenu"></i></div>
+                                    Lớp học
+                                </a>
+                                <a class="nav-link" href="school-year">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-calendar iconmenu"></i></div>
+                                    Năm học
+                                </a>
+                                <a class="nav-link" href="user">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-file iconmenu"></i></div>
+                                    Đề tài
                                 </a>
                                 <a data-bs-toggle="modal" data-bs-target="#changepassword" class="nav-link" href="#">
                                     <div class="sb-nav-link-icon"><i class="fa fa-key iconmenu"></i></div>
