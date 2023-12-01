@@ -5,6 +5,7 @@ import layoutAdmin from '../layout/admin/Layout'
 import userAdmin from '../pages/admin/user/user'
 import schoolYearAdmin from '../pages/admin/schoolYear/schoolYear'
 import classAdmin from '../pages/admin/classes/classes'
+import topicAdmin from '../pages/admin/topic/topic'
 
 //public
 import login from '../pages/public/login'
@@ -21,6 +22,7 @@ const adminRoutes = [
     { path: "/admin/user", component: userAdmin, layout: layoutAdmin },
     { path: "/admin/school-year", component: schoolYearAdmin, layout: layoutAdmin },
     { path: "/admin/class", component: classAdmin, layout: layoutAdmin },
+    { path: "/admin/topic", component: topicAdmin, layout: layoutAdmin },
 ];
 
 export { publicRoutes, adminRoutes};

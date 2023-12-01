@@ -39,7 +39,7 @@ function header({ children }){
                                     <div class="sb-nav-link-icon"><i class="fa fa-calendar iconmenu"></i></div>
                                     Năm học
                                 </a>
-                                <a class="nav-link" href="user">
+                                <a class="nav-link" href="topic">
                                     <div class="sb-nav-link-icon"><i class="fa fa-file iconmenu"></i></div>
                                     Đề tài
                                 </a>
