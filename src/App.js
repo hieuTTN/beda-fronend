@@ -1,7 +1,8 @@
 import { ToastContainer, toast } from 'react-toastify';
 import {Routes, Route,BrowserRouter as Router} from 'react-router-dom'
-import { publicRoutes,adminRoutes } from './router/index';
+import { publicRoutes,adminRoutes, studentRoutes } from './router/index';
 import AdminLayout from './layout/admin/Layout'
+import StudentLayout from './layout/student/Layout'
 import DefaultLayout from './layout/public/defaultLayout/defaultLayout'
 
 function App() {
@@ -24,6 +25,16 @@ function App() {
 
             {adminRoutes.map((route, index) => {
               const Layout = route.layout || AdminLayout
+              const Page = route.component
+              return <Route key={index} path={route.path} element={
+                <Layout>
+                  <Page/>
+                </Layout>
+              }/>
+            })}
+            
+            {studentRoutes.map((route, index) => {
+              const Layout = route.layout || StudentLayout
               const Page = route.component
               return <Route key={index} path={route.path} element={
                 <Layout>

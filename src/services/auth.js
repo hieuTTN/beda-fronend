@@ -32,10 +32,10 @@ async function handleLogin(event) {
             window.location.href = 'employee/student';
         }
         if (result.user.authorities.name === "ROLE_STUDENT") {
-            window.location.href = '/';
+            window.location.href = 'student/topic';
         }
         if (result.user.authorities.name === "ROLE_TEACHER") {
-            window.location.href = '/';
+            window.location.href = 'teacher/topic';
         }
     }
 };

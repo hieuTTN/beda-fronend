@@ -1,4 +1,5 @@
 import layoutAdmin from '../layout/admin/Layout'
+import layoutStudent from '../layout/student/Layout'
 
 
 //admin
@@ -14,6 +15,9 @@ import addTeachertAdmin from '../pages/admin/teacher/addTeacher'
 
 //public
 import login from '../pages/public/login'
+
+//student
+import topicStudent from '../pages/student/topic/topic'
 
 
 
@@ -35,4 +39,8 @@ const adminRoutes = [
     { path: "/admin/add-teacher", component: addTeachertAdmin, layout: layoutAdmin },
 ];
 
-export { publicRoutes, adminRoutes};
+const studentRoutes = [
+    { path: "/student/topic", component: topicStudent, layout: layoutStudent },
+];
+
+export { publicRoutes, adminRoutes, studentRoutes};
