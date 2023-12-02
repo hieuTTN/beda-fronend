@@ -140,7 +140,7 @@ const AdminSchoolYear = ()=>{
                 </div>
 
 
-                <div class="modal fade" id="addschoolyear" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+            <div class="modal fade" id="addschoolyear" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
                 <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header">
