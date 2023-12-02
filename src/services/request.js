@@ -10,6 +10,7 @@ async function requestGet(url) {
 };
 
 
+
 async function uploadFile(filePath) {
     const formData = new FormData()
     formData.append("file", filePath.files[0])

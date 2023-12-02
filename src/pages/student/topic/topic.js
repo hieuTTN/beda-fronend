@@ -7,10 +7,59 @@ import Select from 'react-select';
 import {requestGet} from '../../../services/request'
 
 var token = localStorage.getItem('token');
+
 async function loadTopicById(id){
     const response = await requestGet('http://localhost:8080/api/topic/public/findById?id='+id);
     var obj = await response.json();
     document.getElementById("contenttopic").innerHTML = obj.content
+}
+
+async function cancelRequest(id){
+    var con = window.confirm("Xác nhận hủy yêu cầu đăng ký");
+    if(con == false){return;}
+    var url = 'http://localhost:8080/api/request-topic/student/delete?id='+id
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: new Headers({
+            'Authorization': 'Bearer ' + token,
+        })
+    });
+    if (response.status < 300) {
+        toast.success("Hủy yêu cầu thành công");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        window.location.reload();
+    }
+    else {
+        toast.warning("Thất bại");
+    }
+}
+
+
+async function sendRequest(id){
+    var con = window.confirm("Xác nhận gửi yêu cầu đăng ký");
+    if(con == false){return;}
+    const payload = { 
+        topic:{
+            id:id
+        }
+    }
+    var url = 'http://localhost:8080/api/request-topic/student/create'
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: new Headers({
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        }),
+        body: JSON.stringify(payload)
+    });
+    if (response.status < 300) {
+        toast.success("Gửi yêu cầu thành công");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        window.location.reload();
+    }
+    else {
+        toast.warning("Thất bại");
+    }
 }
 
 const AdminTopic = ()=>{
@@ -60,7 +109,9 @@ const AdminTopic = ()=>{
                                         <td>{item.createdDate}</td>
                                         <td>{item.linkFile != null ? <a href={item.linkFile}>Xem file hướng dẫn</a>:""}</td>
                                         <td class="sticky-col">
-                                            <a><i className='fa fa-edit iconaction'></i></a>
+                                            {item.required == true ?
+                                            <span onClick={()=>cancelRequest(item.id)} className='text-green pointer'>Hủy gửi yêu cầu</span>:
+                                            <i onClick={()=>sendRequest(item.id)} className='fa fa-edit pointer'> Gửi yêu cầu</i>}<br/>
                                             <i onClick={()=>loadTopicById(item.id)} data-bs-toggle="modal" data-bs-target="#contentdiv" className='fa fa-eye iconaction'></i>
                                         </td>
                                     </tr>
