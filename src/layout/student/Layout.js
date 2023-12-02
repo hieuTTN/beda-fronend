@@ -19,13 +19,13 @@ function header({ children }){
                     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                         <div class="sb-sidenav-menu">
                             <div class="nav">
-                                <a class="nav-link" href="user">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-user iconmenu"></i></div>
+                                <a class="nav-link" href="topic">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-file iconmenu"></i></div>
                                     Đề tài
                                 </a>
-                                <a class="nav-link" href="student">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
-                                    Hội đồng
+                                <a class="nav-link" href="my-topic">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-list iconmenu"></i></div>
+                                    Đề tài đăng ký
                                 </a>
                                 <a class="nav-link" href="student">
                                     <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>

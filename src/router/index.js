@@ -18,6 +18,7 @@ import login from '../pages/public/login'
 
 //student
 import topicStudent from '../pages/student/topic/topic'
+import myTopicStudent from '../pages/student/topic/mytopic'
 
 
 
@@ -41,6 +42,7 @@ const adminRoutes = [
 
 const studentRoutes = [
     { path: "/student/topic", component: topicStudent, layout: layoutStudent },
+    { path: "/student/my-topic", component: myTopicStudent, layout: layoutStudent },
 ];
 
 export { publicRoutes, adminRoutes, studentRoutes};
