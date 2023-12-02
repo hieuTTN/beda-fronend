@@ -27,7 +27,7 @@ function header({ children }){
                                     <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Sinh viên
                                 </a>
-                                <a class="nav-link" href="user">
+                                <a class="nav-link" href="teacher">
                                     <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
                                     Giảng viên
                                 </a>

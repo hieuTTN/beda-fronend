@@ -10,7 +10,7 @@ var token = localStorage.getItem('token');
 var size =10;
 var urlAll = ""
 async function loadAllPerson(page, idClass){
-    var url = 'http://localhost:8080/api/person/admin/all-student?size=' + size;
+    var url = 'http://localhost:8080/api/person/admin/all-teacher?size=' + size;
     if(idClass != null) {url+= "&id="+idClass}
     urlAll = url;
     url += '&page='+page; 
@@ -21,7 +21,6 @@ async function loadAllPerson(page, idClass){
 
 const AdminTopic = ()=>{
     const [items, setItems] = useState([]);
-    const [itemClass, setItemClass] = useState([]);
     const [pageCount, setpageCount] = useState(0);
     useEffect(()=>{
         const getPerson = async(page) =>{
@@ -33,13 +32,6 @@ const AdminTopic = ()=>{
         };
         getPerson(0);
 
-        const getClass = async() =>{
-            var first = [{id:"",name:"Tất cả lớp"}]
-            const response = await requestGet('http://localhost:8080/api/classes/public/findAll-list');
-            var list = await response.json();
-            setItemClass(first.concat(list));
-        };
-        getClass();
     }, []);
 
     async function deletePerson(id){
@@ -96,33 +88,13 @@ const AdminTopic = ()=>{
 
 
 
-    async function loadByClass(e){
-        var id = e.id==""?null:e.id;
-        const response = await loadAllPerson(0, id);
-        var result = await response.json();
-        console.log(result);
-        var totalPage = result.totalPages;
-        setItems(result.content)
-        setpageCount(totalPage);
-    }
-
 
     return (
         <div>
             <div class="col-sm-12 header-sp">
                     <div class="row">
                         <div className='col-3'>
-                            <a href='add-student' className='btn btn-primary'>Thêm sinh viên</a>
-                        </div>
-                        <div className='col-md-4 col-sm-6 col-6'>
-                            <Select
-                            onChange={(item) => {
-                                loadByClass(item);
-                            }}
-                            options={itemClass} 
-                            getOptionLabel={(itemClass)=>itemClass.name} 
-                            getOptionValue={(itemClass)=>itemClass.id}  
-                            placeholder="Lọc theo lớp"/>
+                            <a href='add-teacher' className='btn btn-primary'>Thêm giảng viên</a>
                         </div>
                     </div>
                 </div>

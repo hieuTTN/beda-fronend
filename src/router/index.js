@@ -8,6 +8,9 @@ import classAdmin from '../pages/admin/classes/classes'
 import topicAdmin from '../pages/admin/topic/topic'
 import addTopicAdmin from '../pages/admin/topic/addTopic'
 import studentAdmin from '../pages/admin/student/student'
+import addStudentAdmin from '../pages/admin/student/addStudent'
+import teachertAdmin from '../pages/admin/teacher/teacher'
+import addTeachertAdmin from '../pages/admin/teacher/addTeacher'
 
 //public
 import login from '../pages/public/login'
@@ -27,6 +30,9 @@ const adminRoutes = [
     { path: "/admin/topic", component: topicAdmin, layout: layoutAdmin },
     { path: "/admin/add-topic", component: addTopicAdmin, layout: layoutAdmin },
     { path: "/admin/student", component: studentAdmin, layout: layoutAdmin },
+    { path: "/admin/add-student", component: addStudentAdmin, layout: layoutAdmin },
+    { path: "/admin/teacher", component: teachertAdmin, layout: layoutAdmin },
+    { path: "/admin/add-teacher", component: addTeachertAdmin, layout: layoutAdmin },
 ];
 
 export { publicRoutes, adminRoutes};
