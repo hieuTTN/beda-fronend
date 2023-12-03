@@ -16,9 +16,13 @@ const MyTopic = ()=>{
     const [itemTopicPerson, setItemTopicPerson] = useState([]);
     const [itemStudent, setItemStudent] = useState([]);
     const [itemReport, setItemReport] = useState([]);
+    const [itemTeacher, setItemTeacher] = useState([]);
     const [student, setStudent] = useState(null);
     const [report, setReport] = useState(null);
+    const [topic, setTopic] = useState(null);
     const [leader, setLeader] = useState(false);
+    const [itemCouncil, setItemCouncil] = useState([]);
+
     useEffect(()=>{
         const getTopic = async() =>{
             const response = await requestGet('http://localhost:8080/api/topic-person/student/MyTopicPerson');
@@ -32,6 +36,12 @@ const MyTopic = ()=>{
             setItemStudent(list)
         };
         getStudent();
+        const getTeacher = async() =>{
+            const response = await requestGet('http://localhost:8080/api/person/student/all-teacher');
+            var list = await response.json();
+            setItemTeacher(list);
+        };
+        getTeacher();
     }, []);
     var user = JSON.parse(window.localStorage.getItem('user'));
     const getTopicPerson = async(idTopic) =>{
@@ -108,8 +118,6 @@ const MyTopic = ()=>{
         setItemReport(list)
     };
 
-
-
     async function saveReport(event){
         event.preventDefault();
         document.getElementById("loading").style.display = 'block'
@@ -173,6 +181,39 @@ const MyTopic = ()=>{
         }
     }
 
+    async function loadCouncil(id){
+        const response = await requestGet('http://localhost:8080/api/counci/student/findByTopic?id='+id);
+        var list = await response.json();
+        setItemCouncil(list);
+    }
+
+    async function updateTeacher(event){
+        event.preventDefault();
+        var con = window.confirm("Xác nhận cập nhật giảng viên hướng dẫn");
+        if(con == false){return;}
+        var url = 'http://localhost:8080/api/topic/student/add-teacher?id='+topic.id+"&idperson="+event.target.elements.giangvienhd.value
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + token
+            })
+        });
+        if (response.status < 300) {
+            toast.success("Thành công");
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            window.location.reload();
+        }
+        else {
+            if(response.status == 417){
+                var result  = await response.json();
+                toast.error(result.errorMessage)
+            } 
+            else{
+                toast.error("Thất bại")
+            }
+        }
+    }
+
     return (
         <div>
             <div class="col-sm-12 header-sp">
@@ -192,6 +233,7 @@ const MyTopic = ()=>{
                                     <th>Mô tả</th>
                                     <th>Cập nhật</th>
                                     <th>File hướng dẫn</th>
+                                    <th>Giảng viên hướng dẫn</th>
                                     <th class="sticky-col">Hành động</th>
                                 </tr>
                             </thead>
@@ -203,9 +245,14 @@ const MyTopic = ()=>{
                                         <td>{item.topic.description}</td>
                                         <td>{item.topic.createdDate}</td>
                                         <td>{item.topic.linkFile != null ? <a href={item.topic.linkFile}>Xem file hướng dẫn</a>:""}</td>
+                                        <td>
+                                            {item.topic.teacher!= null?item.topic.teacher.code+" - "+item.topic.teacher.fullname:"Chưa có giảng viên hd"}
+                                            <br/><i onClick={()=>setTopic(item.topic)} data-bs-toggle="modal" data-bs-target="#modalTeacher" className='fa fa-edit iconaction'></i>
+                                        </td>
                                         <td class="sticky-col">
                                             <i onClick={()=>getTopicPerson(item.topic.id)} data-bs-toggle="modal" data-bs-target="#membermodal" className='fa fa-users pointer'> Thành viên</i>
                                             <i onClick={()=>getReport(item.topic.id)} data-bs-toggle="modal" data-bs-target="#reportmodal" className='fa fa-file pointer'> Báo cáo</i>
+                                            <i onClick={()=>loadCouncil(item.topic.id)} data-bs-toggle="modal" data-bs-target="#modalhd" className='fa fa-users pointer'> Hội đồng</i>
                                         </td>
                                     </tr>
                                 })}
@@ -330,6 +377,83 @@ const MyTopic = ()=>{
                 </div>
             </div>
 
+            <div class="modal fade" id="modalTeacher" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Chọn giảng viên</h5> <button id='btnclosemodal' type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                        <div class="modal-body row">
+                            <div className='paddingmodal'>
+                                <form onSubmit={updateTeacher} className='row' method='post'>
+                                    <div className='col-5'>
+                                        <Select
+                                        options={itemTeacher} 
+                                        name='giangvienhd'
+                                        getOptionLabel={(itemTeacher)=>"MGV: "+itemTeacher.code+", email: "+itemTeacher.email+", "+ itemTeacher.fullname} 
+                                        getOptionValue={(itemTeacher)=>itemTeacher.id}  
+                                        placeholder="Chọn giảng viên"/>
+                                    </div>
+                                    <div className='col-4'>
+                                        <button className='btn btn-primary'>Cập nhật giảng viên hướng dẫn</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalhd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Hội đồng</h5> <button id='btnclosemodal' type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                        <div class="modal-body row modalform">
+                            <table class="table table-striped tablefix">
+                                <thead class="thead-tablefix">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Tên hội đồng</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Ngày báo cáo</th>
+                                        <th>Giờ báo cáo</th>
+                                        <th>Thành viên hội đồng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {itemCouncil.map(item=>{
+                                    return <tr>
+                                        <td>{item.id}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.createdDate}</td>
+                                        <td>{item.dayReport}</td>
+                                        <td>{item.timeReport}</td>
+                                        <td>
+                                            <table className='table table-border'>
+                                            <tr>
+                                                <th>Mã giảng viên</th>
+                                                <th>Họ tên</th>
+                                                <th>Điểm</th>
+                                                <th>Ghi chú</th>
+                                            </tr>
+                                            {item.councilPersons.map(itemperson=>{
+                                                return <tr>
+                                                    <td>{itemperson.person.code}</td>
+                                                    <td>{itemperson.person.fullname}</td>
+                                                    <th>{itemperson.mark}</th>
+                                                    <td>{itemperson.note}</td>
+                                                </tr>
+                                                })}
+                                            </table>
+                                        </td>
+                                    </tr>
+                                })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

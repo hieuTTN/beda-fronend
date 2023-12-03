@@ -27,10 +27,6 @@ function header({ children }){
                                     <div class="sb-nav-link-icon"><i class="fa fa-list iconmenu"></i></div>
                                     Đề tài đăng ký
                                 </a>
-                                <a class="nav-link" href="student">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-users iconmenu"></i></div>
-                                    Báo cáo
-                                </a>
                                 <a data-bs-toggle="modal" data-bs-target="#changepassword" class="nav-link" href="#">
                                     <div class="sb-nav-link-icon"><i class="fa fa-key iconmenu"></i></div>
                                     Mật khẩu

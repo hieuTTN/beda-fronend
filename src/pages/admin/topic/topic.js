@@ -106,10 +106,39 @@ async function deleteRequest(id){
     }
 }
 
+async function deleteCouncilPerson(id){
+    var con = window.confirm("xác nhận xóa");
+    if(con == false){return;}
+    var url = 'http://localhost:8080/api/council-person/admin/delete?id='+id;
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: new Headers({
+            'Authorization': 'Bearer ' + token
+        })
+    });
+    if(response.status < 300){
+        toast.success("Thành công")
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        window.location.reload();
+    }
+    else{
+        if(response.status == 417){
+            var result  = await response.json();
+            toast.error(result.errorMessage)
+        } 
+        else{
+            toast.error("Thất bại")
+        }
+    }
+}
+
+
 const AdminTopic = ()=>{
     const [items, setItems] = useState([]);
     const [itemRequest, setItemRequest] = useState([]);
     const [itemSchoolYear, setItemSchoolYear] = useState([]);
+    const [itemCouncil, setItemCouncil] = useState([]);
+    const [itemTeacher, setItemTeacher] = useState([]);
     const [pageCount, setpageCount] = useState(0);
     useEffect(()=>{
         const getTopic = async(page) =>{
@@ -128,6 +157,13 @@ const AdminTopic = ()=>{
             setItemSchoolYear(first.concat(list));
         };
         getSchoolYear();
+
+        const getTeacher = async() =>{
+            const response = await requestGet('http://localhost:8080/api/person/admin/all-teacher');
+            var result = await response.json();
+            setItemTeacher(result.content);
+        };
+        getTeacher();
     }, []);
 
     async function loadRequest(id){
@@ -188,8 +224,6 @@ const AdminTopic = ()=>{
         const listClass = await fetchTopic(currentPage);
     }
 
-
-
     async function loadBySchoolYear(e){
         var id = e.id==""?null:e.id;
         const response = await loadAllTopic(0, id);
@@ -200,6 +234,53 @@ const AdminTopic = ()=>{
         setpageCount(totalPage);
     }
 
+    async function loadCouncil(id){
+        const response = await requestGet('http://localhost:8080/api/counci/admin/findByTopic?id='+id);
+        var list = await response.json();
+        setItemCouncil(list);
+    }
+
+    async function saveCouncilPerson(event){
+        event.preventDefault();
+        const payload = { 
+            person:{id:event.target.elements.personid.value},
+            council:{id:event.target.elements.councilid.value},
+        }
+        var url = 'http://localhost:8080/api/council-person/admin/create'
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }),
+            body: JSON.stringify(payload)
+        });
+        if (response.status < 300) {
+            toast.success("Thành công");
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            window.location.reload();
+        }
+        if (response.status == 417) {
+            var result = await response.json()
+            toast.warning(result.errorMessage);
+        }
+    }
+
+    async function updateTime(id){
+        var dates = document.getElementById("date"+id).value
+        var times = document.getElementById("time"+id).value
+        var url = 'http://localhost:8080/api/counci/admin/updateTime?id='+id+'&date='+dates+'&time='+times
+        const response = await requestGet(url);
+        if (response.status < 300) {
+            toast.success("Thành công");
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            window.location.reload();
+        }
+        if (response.status == 417) {
+            var result = await response.json()
+            toast.warning(result.errorMessage);
+        }
+    }
 
     return (
         <div>
@@ -246,7 +327,8 @@ const AdminTopic = ()=>{
                                         <td class="sticky-col">
                                             <a href={"add-topic?id="+item.id}><i className='fa fa-edit iconaction'></i></a>
                                             <i onClick={()=>deleteTopic(item.id)} className='fa fa-trash iconaction'></i>
-                                            <i onClick={()=>loadRequest(item.id)} data-bs-toggle="modal" data-bs-target="#addschoolyear" className='fa fa-eye pointer'> Xem yêu cầu</i>
+                                            <span onClick={()=>loadRequest(item.id)} data-bs-toggle="modal" data-bs-target="#addschoolyear" className='fontsm'> Xem yêu cầu</span>
+                                            <span onClick={()=>loadCouncil(item.id)} data-bs-toggle="modal" data-bs-target="#modalhd" className='fontsm'> Xem hội đồng</span>
                                         </td>
                                     </tr>
                                 })}
@@ -301,6 +383,72 @@ const AdminTopic = ()=>{
                                             </td>
                                         </tr>
                                     })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalhd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Hội đồng</h5> <button id='btnclosemodal' type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                        <div class="modal-body row modalform">
+                            <form onSubmit={saveCouncilPerson} method='post' className='headermodal row'>
+                                <div className='col-sm-4'>
+                                    <Select
+                                    name='councilid'
+                                    options={itemCouncil} 
+                                    getOptionLabel={(itemCouncil)=>itemCouncil.name} 
+                                    getOptionValue={(itemCouncil)=>itemCouncil.id}  
+                                    placeholder="Chọn hội đồng"/>
+                                </div>
+                                <div className='col-sm-4'>
+                                    <Select
+                                    name='personid'
+                                    options={itemTeacher} 
+                                    getOptionLabel={(itemTeacher)=>itemTeacher.code+", "+itemTeacher.fullname+", "+itemTeacher.email} 
+                                    getOptionValue={(itemTeacher)=>itemTeacher.id}  
+                                    placeholder="Chọn giảng viên"/>
+                                </div>
+                                <div className='col-sm-4'>
+                                    <button className='btn btn-primary'>Thêm vào hội đồng</button>
+                                </div>
+                            </form>
+                            <table class="table table-striped tablefix">
+                                <thead class="thead-tablefix">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Tên hội đồng</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Ngày báo cáo</th>
+                                        <th>Giờ báo cáo</th>
+                                        <th>Thành viên hội đồng</th>
+                                        <th class="sticky-col">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {itemCouncil.map(item=>{
+                                    return <tr>
+                                        <td>{item.id}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.createdDate}</td>
+                                        <td><input id={"date"+item.id} type='date' defaultValue={item.dayReport} className='form-control'/></td>
+                                        <td><input id={"time"+item.id} type='time' defaultValue={item.timeReport} className='form-control'/></td>
+                                        <td>
+                                        {item.councilPersons.map(itemperson=>{
+                                            return <span>{itemperson.person.code+" - " +itemperson.person.fullname+" " }
+                                                    <i onClick={()=>deleteCouncilPerson(itemperson.id)} className='fa fa-trash pointer'></i><br/>
+                                                    </span>
+                                        })}
+                                        </td>
+                                        <td class="sticky-col">
+                                            <button onClick={()=>updateTime(item.id)} className='btn btn-primary fontsm'>Cập nhật thời gian báo cáo</button>
+                                        </td>
+                                    </tr>
+                                })}
                                 </tbody>
                             </table>
                         </div>
