@@ -4,7 +4,7 @@ import {toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AsyncSelect from 'react-select/async';
 import Select from 'react-select';
-import {requestGet} from '../../../services/request'
+import {requestGet,uploadFile} from '../../../services/request'
 
 var token = localStorage.getItem('token');
 
@@ -15,7 +15,9 @@ const MyTopic = ()=>{
     const [items, setItems] = useState([]);
     const [itemTopicPerson, setItemTopicPerson] = useState([]);
     const [itemStudent, setItemStudent] = useState([]);
+    const [itemReport, setItemReport] = useState([]);
     const [student, setStudent] = useState(null);
+    const [report, setReport] = useState(null);
     const [leader, setLeader] = useState(false);
     useEffect(()=>{
         const getTopic = async() =>{
@@ -43,7 +45,6 @@ const MyTopic = ()=>{
             }
         }
     };
-    console.log(leader);
 
     async function addMember(){
         var con = window.confirm("Xác nhận thêm thành viên vào nhóm");
@@ -100,6 +101,78 @@ const MyTopic = ()=>{
         }
     }
 
+    const getReport = async(idTopic) =>{
+        idTopicSelect = idTopic;
+        const response = await requestGet('http://localhost:8080/api/report/student/findByTopic?id='+idTopic);
+        var list = await response.json();
+        setItemReport(list)
+    };
+
+
+
+    async function saveReport(event){
+        event.preventDefault();
+        document.getElementById("loading").style.display = 'block'
+        var linkFile = await uploadFile(document.getElementById("chooseFile"));
+        var chooseF = document.getElementById("chooseFile")
+        const payload = { 
+            id:event.target.elements.idreport.value,
+            name:event.target.elements.reportName.value,
+            note:event.target.elements.note.value,
+            linkFile:linkFile!=null?linkFile:event.target.elements.linkFile.value,
+            typeFile:linkFile!=null?chooseF.files[0].type:event.target.elements.typeFile.value,
+            topic:{
+                id:idTopicSelect
+            }
+        }
+        console.log(payload);
+        var url = 'http://localhost:8080/api/report/student/create'
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }),
+            body: JSON.stringify(payload)
+        });
+        if (response.status < 300) {
+            toast.success("Thành công");
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            window.location.reload();
+        }
+        else{
+            toast.error("Thất bại");
+        }
+        document.getElementById("loading").style.display = 'none'
+    }
+
+    async function deleteReport(id){
+        var con = window.confirm("Xác nhận xóa báo cáo này?")
+        if (con == false) {
+            return;
+        }
+        var url = 'http://localhost:8080/api/report/student/delete?id=' + id;
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + token,
+            })
+        });
+        if(response.status < 300){
+            toast.success("Xóa thành công")
+            getReport(idTopicSelect);
+        }
+        else{
+            if(response.status == 417){
+                var result  = await response.json();
+                toast.error(result.errorMessage)
+            } 
+            else{
+                toast.error("Xóa thất bại")
+            }
+        }
+    }
+
     return (
         <div>
             <div class="col-sm-12 header-sp">
@@ -132,7 +205,7 @@ const MyTopic = ()=>{
                                         <td>{item.topic.linkFile != null ? <a href={item.topic.linkFile}>Xem file hướng dẫn</a>:""}</td>
                                         <td class="sticky-col">
                                             <i onClick={()=>getTopicPerson(item.topic.id)} data-bs-toggle="modal" data-bs-target="#membermodal" className='fa fa-users pointer'> Thành viên</i>
-                                            <i data-bs-toggle="modal" data-bs-target="#contentdiv" className='fa fa-file pointer'> Báo cáo</i>
+                                            <i onClick={()=>getReport(item.topic.id)} data-bs-toggle="modal" data-bs-target="#reportmodal" className='fa fa-file pointer'> Báo cáo</i>
                                         </td>
                                     </tr>
                                 })}
@@ -141,15 +214,63 @@ const MyTopic = ()=>{
                     </div>
                 </div>
 
-            <div class="modal fade" id="contentdiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+            <div class="modal fade" id="reportmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Nội dung đề tài</h5> <button id='btnclosemodal' type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                        <h5 class="modal-title" id="exampleModalLabel">Danh sách báo cáo</h5> <button id='btnclosemodal' type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
                         <div class="modal-body row">
-                            <div id='contenttopic'>
-
-                            </div>
+                            <form onSubmit={saveReport} method='post' className='divaddreport'>
+                                <h4>Thêm báo cáo</h4>
+                                <div className='row'>
+                                    <div className='col-sm-5'>
+                                        <label>Tên báo cáo</label>
+                                        <input defaultValue={report==null?"":report.name} name='reportName' className='form-control'/>
+                                        <label>Chọn file</label>
+                                        <input id='chooseFile' type='file' className='form-control'/>
+                                        <input defaultValue={report==null?"":report.id} name='idreport' type='hidden' className='form-control'/>
+                                        <input defaultValue={report==null?"":report.linkFile} name='linkFile' type='hidden' className='form-control'/>
+                                        <input defaultValue={report==null?"":report.typeFile} name='typeFile' type='hidden' className='form-control'/>
+                                    </div>
+                                    <div className='col-sm-7'>
+                                        <label>Ghi chú</label>
+                                        <textarea name='note' defaultValue={report==null?"":report.note} className='form-control'></textarea>
+                                        <div id="loading">
+                                            <div class="bar1 bar"></div>
+                                        </div><br></br>
+                                        <button className='btn btn-primary form-control'>Thêm/ cập nhật báo cáo</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <table class="table table-striped tablefix">
+                                <thead class="thead-tablefix">
+                                    <tr>
+                                        <th>Tên báo cáo</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Loại file</th>
+                                        <th>Ghi chú</th>
+                                        <th>Người đăng</th>
+                                        <th class="sticky-col">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {itemReport.map(itemReport=>{
+                                        return <tr>
+                                            <td>{itemReport.name}</td>
+                                            <td>{itemReport.createTime +", "+itemReport.createdDate}</td>
+                                            <td>{itemReport.typeFile}</td>
+                                            <td>{itemReport.note}</td>
+                                            <td>{itemReport.person.fullname}</td>
+                                            <td class="sticky-col">
+                                                {itemReport.isTrue==false?"":
+                                                <i onClick={()=>deleteReport(itemReport.id)} className='fa fa-trash pointer'></i>}
+                                                {itemReport.isTrue==false?"":
+                                                <i onClick={()=>setReport(itemReport)} className='fa fa-edit pointer'></i>}
+                                            </td>
+                                        </tr>
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
