@@ -35,7 +35,7 @@ async function handleLogin(event) {
             window.location.href = 'student/topic';
         }
         if (result.user.authorities.name === "ROLE_TEACHER") {
-            window.location.href = 'teacher/topic';
+            window.location.href = 'teacher/my-topic';
         }
     }
 };

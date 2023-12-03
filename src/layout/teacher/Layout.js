@@ -3,11 +3,11 @@ import stylecus from './stylecus.scss';
 import {handleChangePass} from '../../services/auth'
 
 function header({ children }){
-    checkStudent();
+    checkTeacher();
     return(
         <div class="sb-nav-fixed">
             <nav id="top" class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-                <a class="navbar-brand ps-3" href="#">Student</a>
+                <a class="navbar-brand ps-3" href="#">Teacher</a>
                 <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
                 <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
                 <ul id="menuleft" class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
@@ -19,13 +19,13 @@ function header({ children }){
                     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                         <div class="sb-sidenav-menu">
                             <div class="nav">
-                                <a class="nav-link" href="topic">
-                                    <div class="sb-nav-link-icon"><i class="fa fa-file iconmenu"></i></div>
-                                    Đề tài
-                                </a>
                                 <a class="nav-link" href="my-topic">
+                                    <div class="sb-nav-link-icon"><i class="fa fa-file iconmenu"></i></div>
+                                    Đề tài hướng dẫn
+                                </a>
+                                <a class="nav-link" href="council">
                                     <div class="sb-nav-link-icon"><i class="fa fa-list iconmenu"></i></div>
-                                    Đề tài đăng ký
+                                    Hội đồng
                                 </a>
                                 <a data-bs-toggle="modal" data-bs-target="#changepassword" class="nav-link" href="#">
                                     <div class="sb-nav-link-icon"><i class="fa fa-key iconmenu"></i></div>
@@ -69,9 +69,9 @@ function header({ children }){
     );
 }
 
-async function checkStudent(){
+async function checkTeacher(){
     var token = localStorage.getItem("token");
-    var url = 'http://localhost:8080/api/student/check-role-student';
+    var url = 'http://localhost:8080/api/teacher/check-role-teacher';
     const response = await fetch(url, {
         headers: new Headers({
             'Authorization': 'Bearer ' + token

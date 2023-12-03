@@ -3,7 +3,7 @@ import stylecus from './stylecus.scss';
 import {handleChangePass} from '../../services/auth'
 
 function header({ children }){
-    // checkAdmin();
+    checkAdmin();
     return(
         <div class="sb-nav-fixed">
             <nav id="top" class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -87,7 +87,7 @@ function header({ children }){
 
 async function checkAdmin(){
     var token = localStorage.getItem("token");
-    var url = 'http://localhost:8080/api/admin/checkAdmin';
+    var url = 'http://localhost:8080/api/admin/check-role-admin';
     const response = await fetch(url, {
         headers: new Headers({
             'Authorization': 'Bearer ' + token

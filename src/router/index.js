@@ -1,5 +1,6 @@
 import layoutAdmin from '../layout/admin/Layout'
 import layoutStudent from '../layout/student/Layout'
+import layoutTeacher from '../layout/teacher/Layout'
 
 
 //admin
@@ -19,6 +20,10 @@ import login from '../pages/public/login'
 //student
 import topicStudent from '../pages/student/topic/topic'
 import myTopicStudent from '../pages/student/topic/mytopic'
+
+//student
+import myTopicTeacher from '../pages/teacher/topic/mytopic'
+import councilTeacher from '../pages/teacher/topic/council'
 
 
 
@@ -44,5 +49,9 @@ const studentRoutes = [
     { path: "/student/topic", component: topicStudent, layout: layoutStudent },
     { path: "/student/my-topic", component: myTopicStudent, layout: layoutStudent },
 ];
+const teacherRoutes = [
+    { path: "/teacher/my-topic", component: myTopicTeacher, layout: layoutTeacher },
+    { path: "/teacher/council", component: councilTeacher, layout: layoutTeacher },
+];
 
-export { publicRoutes, adminRoutes, studentRoutes};
+export { publicRoutes, adminRoutes, studentRoutes, teacherRoutes };

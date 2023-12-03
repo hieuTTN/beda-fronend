@@ -20,7 +20,6 @@ function login(){
                     <label>Mật khẩu</label>
                     <input required name='password' id="password" type="password" placeholder="******" className="form-control"/>
                     <button type='submit' className="btn-login">Đăng nhập</button>
-                    <a className="forgot-password" data-bs-toggle="modal" data-bs-target="#exampleModalhocvien">Quên mật khẩu</a>
                 </form>
                 </div>
             </div>
