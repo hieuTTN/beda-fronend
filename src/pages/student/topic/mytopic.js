@@ -303,7 +303,7 @@ const MyTopic = ()=>{
                                 <tbody>
                                     {itemReport.map(itemReport=>{
                                         return <tr>
-                                            <td>{itemReport.name}</td>
+                                            <td><a href={itemReport.linkFile} target='_blank'>{itemReport.name}</a></td>
                                             <td>{itemReport.createTime +", "+itemReport.createdDate}</td>
                                             <td>{itemReport.typeFile}</td>
                                             <td>{itemReport.note}</td>
